@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego del Colegio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="sky"></div> <!-- Nuevo elemento para el cielo -->
+        <div id="ground"></div> <!-- Nuevo elemento para el suelo -->
+        <div id="character"></div>
+        <div id="school"></div>
+        <div id="platform"></div>
+        <div id="npc-carrot"></div>
+    </div>
+    <div id="win-overlay">
+        <img id="win-image" src="img/bravo.webp" alt="¡Ganaste!">
+    </div>
+    <div id="debug-panel">
+        <p><strong>Debug Panel</strong></p>
+        <p>Position X: <span id="debug-position-x">0</span></p>
+        <p>Position Y: <span id="debug-position-y">0</span></p>
+        <p>Is Jumping: <span id="debug-is-jumping">false</span></p>
+        <p>Keys Pressed: <span id="debug-keys-pressed">{}</span></p>
+        <p>Background Image: <span id="debug-background-image">none</span></p>
+        <p>Check Win: <span id="debug-check-win">false</span></p>
+        <p>Ground Level: <span id="debug-ground-level">0</span></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -9,6 +9,7 @@ let keysPressed = {};
 let hasWon = false; // Variable para controlar si ya se ganó
 let groundLevel = 50; // Nivel del suelo por defecto
 let animationFrameId;
+let carrotCount = 0; // Contador de zanahorias
 
 function handleKeyDown(event) {
     keysPressed[event.key] = true;
@@ -63,12 +64,12 @@ function checkPlatformCollision() {
 
     // Verifica si el personaje está sobre la plataforma
     if (isOnPlatform) {
-        groundLevel = 115; // Ajusta el nivel del suelo a la plataforma
+        groundLevel = 140; // Ajusta el nivel del suelo a la plataforma
     } else {
         var hasToFall = groundLevel != 50;
         groundLevel = 50; // Restablece el nivel del suelo al valor por defecto
 
-        if (hasToFall) {
+        if (hasToFall && !isJumping) {
             jump(0); // Si el personaje no está en la plataforma, inicia la caída
         }
     }
@@ -103,9 +104,71 @@ function jump(j) {
     }, 20);
 }
 
+function checkCarrotCollision() {
+    const characterRect = character.getBoundingClientRect();
+    const carrot = document.getElementById('npc-carrot');
+    if (!carrot || carrot.style.visibility === 'hidden') return; // Asegurarse de que la zanahoria exista y no haya sido recogida
+
+    const carrotRect = carrot.getBoundingClientRect();
+    const isColliding = (
+        characterRect.right >= carrotRect.left &&
+        characterRect.left <= carrotRect.right &&
+        characterRect.bottom >= carrotRect.top &&
+        characterRect.top <= carrotRect.bottom
+    );
+
+    if (isColliding) {
+        carrot.style.visibility = 'hidden'; // Hace que la zanahoria desaparezca
+        carrotCount += 1; // Incrementa el contador de zanahorias
+        updateCarrotCounter(); // Actualiza el contador en pantalla
+        showCarrotAnimation(carrotRect.left, carrotRect.top); // Muestra la animación de +1
+    }
+}
+
+function updateCarrotCounter() {
+    const counter = document.getElementById('carrot-counter');
+    if (counter) {
+        counter.textContent = `Zanahorias: ${carrotCount}`;
+    }
+}
+
+function showCarrotAnimation(x, y) {
+    const animation = document.createElement('div');
+    animation.textContent = '+1';
+    animation.style.position = 'absolute';
+    animation.style.left = `${x}px`;
+    animation.style.top = `${y}px`;
+    animation.style.color = '#32CD32'; // Cambié a un verde más claro
+    animation.style.fontSize = '24px'; // Aumenté el tamaño de la fuente
+    animation.style.fontWeight = 'bold';
+    animation.style.zIndex = '10';
+    animation.style.animation = 'fade-up 1s forwards';
+
+    document.body.appendChild(animation);
+
+    setTimeout(() => {
+        document.body.removeChild(animation);
+    }, 1000);
+}
+
+// Agregar animación CSS para el efecto de subir y desaparecer
+const style = document.createElement('style');
+style.textContent = `
+@keyframes fade-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}`;
+document.head.appendChild(style);
+
 function updateCharacterPosition() {
     if (hasWon) return; // Si ya se ganó, no hacer nada
-    
+
     const step = 5;
     const containerRect = gameContainer.getBoundingClientRect();
     const characterRect = character.getBoundingClientRect();
@@ -133,6 +196,7 @@ function updateCharacterPosition() {
     character.style.left = `${positionX}px`;
 
     checkPlatformCollision(); // Verifica la colisión con la plataforma
+    checkCarrotCollision(); // Verifica la colisión con la zanahoria
     checkWin(); // Llama a la función para verificar si el personaje llegó al colegio
 
     updateDebugPanel(); // Actualiza el panel de depuración
@@ -177,3 +241,21 @@ function checkWin() {
         fireworks.style.visibility = 'visible';
     }
 }
+
+// Agregar el contador al inicio del juego
+document.addEventListener('DOMContentLoaded', () => {
+    const counter = document.createElement('div');
+    counter.id = 'carrot-counter';
+    counter.textContent = 'Zanahorias: 0';
+    counter.style.position = 'absolute';
+    counter.style.top = '10px';
+    counter.style.right = '10px';
+    counter.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    counter.style.padding = '5px 10px';
+    counter.style.border = '1px solid #000';
+    counter.style.fontFamily = 'Arial, sans-serif';
+    counter.style.fontSize = '14px';
+    counter.style.zIndex = '10';
+
+    document.body.appendChild(counter);
+});

@@ -236,9 +236,12 @@ function checkWin() {
 
         // Mostrar la imagen de victoria y los fuegos artificiales
         const winOverlay = document.getElementById('win-overlay');
-        const fireworks = document.querySelector('.fireworks');
         winOverlay.style.visibility = 'visible';
-        fireworks.style.visibility = 'visible';
+
+        const fireworks = document.querySelector('.fireworks');
+        if (fireworks) {
+            fireworks.style.visibility = 'visible';
+        }
     }
 }
 

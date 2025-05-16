@@ -11,6 +11,50 @@ let groundLevel = 50; // Nivel del suelo por defecto
 let animationFrameId;
 let carrotCount = 0; // Contador de zanahorias
 
+let plataformas = [];
+let carrots = [];
+let schoolPos = { left: 500, bottom: 50, width: 100, height: 100 }; // Posición y tamaño de la escuela
+
+function init() {
+    setPlatforms();
+    setCarrots();
+}
+
+function setPlatforms() {
+    plataformas.forEach(plataforma => {
+        const platform = document.createElement('div');
+        platform.id = `platform-${plataforma.id}`;
+        platform.className = 'platform';
+        platform.style.left = `${plataforma.left}px`;
+        platform.style.bottom = `${plataforma.bottom}px`;
+        platform.style.width = `${plataforma.width}px`;
+        platform.style.height = `${plataforma.height}px`;
+        platform.style.position = 'absolute';
+        platform.style.backgroundColor = '#8B4513'; // Color marrón para la plataforma
+        platform.style.zIndex = '2'; // Asegúrate de que la plataforma esté detrás del personaje
+        gameContainer.appendChild(platform);
+    });
+}
+
+function setCarrots() {
+    carrots.forEach(carrot => {
+        const carrotElement = document.createElement('div');
+        carrotElement.id = `carrot-${carrot.id}`;
+        carrotElement.className = 'carrot';
+        carrotElement.style.left = `${carrot.left}px`;
+        carrotElement.style.bottom = `${carrot.bottom}px`;
+        carrotElement.style.width = `${carrot.width}px`;
+        carrotElement.style.height = `${carrot.height}px`;
+        carrotElement.style.position = 'absolute';
+        carrotElement.style.backgroundImage = 'url("sprite/zanaoria/frame-00.png")'; // Sprite inicial de la zanahoria
+        carrotElement.style.backgroundSize = 'contain';
+        carrotElement.style.backgroundRepeat = 'no-repeat';
+        carrotElement.style.animation = 'carrot-animation 1s steps(20) infinite'; // Animación de la zanahoria
+        carrotElement.style.zIndex = '3'; // Asegúrate de que la zanahoria esté delante del personaje
+        gameContainer.appendChild(carrotElement);
+    });
+}
+
 function handleKeyDown(event) {
     keysPressed[event.key] = true;
 
@@ -28,6 +72,7 @@ document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('keyup', handleKeyUp);
 
 function updateDebugPanel() {
+    return; // Descomentar para habilitar el panel de depuración
     document.getElementById('debug-position-x').textContent = positionX;
     document.getElementById('debug-position-y').textContent = positionY;
     document.getElementById('debug-is-jumping').textContent = isJumping;
@@ -54,23 +99,29 @@ function updateDebugPanel() {
 
 function checkPlatformCollision() {
     const characterRect = character.getBoundingClientRect();
-    const platformRect = document.getElementById('platform').getBoundingClientRect();
-    const isOnPlatform = (
-        characterRect.bottom >= platformRect.top &&
-        characterRect.bottom <= platformRect.top + 5 && // Tolerancia para la colisión
-        characterRect.right > platformRect.left &&
-        characterRect.left < platformRect.right
-    );
+    let isOnAnyPlatform = false;
 
-    // Verifica si el personaje está sobre la plataforma
-    if (isOnPlatform) {
-        groundLevel = 140; // Ajusta el nivel del suelo a la plataforma
-    } else {
-        var hasToFall = groundLevel != 50;
+    plataformas.forEach(plataforma => {
+        const platformRect = document.getElementById(`platform-${plataforma.id}`).getBoundingClientRect();
+        const isOnPlatform = (
+            characterRect.bottom >= platformRect.top &&
+            characterRect.bottom <= platformRect.top + 5 && // Tolerancia para la colisión
+            characterRect.right > platformRect.left &&
+            characterRect.left < platformRect.right
+        );
+
+        if (isOnPlatform) {
+            groundLevel = plataforma.bottom + plataforma.height - 5; // Ajusta el nivel del suelo a la plataforma
+            isOnAnyPlatform = true;
+        }
+    });
+
+    if (!isOnAnyPlatform) {
+        const wasOnPlatform = groundLevel !== 50;
         groundLevel = 50; // Restablece el nivel del suelo al valor por defecto
 
-        if (hasToFall && !isJumping) {
-            jump(0); // Si el personaje no está en la plataforma, inicia la caída
+        if (wasOnPlatform && !isJumping) {
+            jump(0); // Si el personaje no está en ninguna plataforma, inicia la caída
         }
     }
 }
@@ -106,23 +157,26 @@ function jump(j) {
 
 function checkCarrotCollision() {
     const characterRect = character.getBoundingClientRect();
-    const carrot = document.getElementById('npc-carrot');
-    if (!carrot || carrot.style.visibility === 'hidden') return; // Asegurarse de que la zanahoria exista y no haya sido recogida
 
-    const carrotRect = carrot.getBoundingClientRect();
-    const isColliding = (
-        characterRect.right >= carrotRect.left &&
-        characterRect.left <= carrotRect.right &&
-        characterRect.bottom >= carrotRect.top &&
-        characterRect.top <= carrotRect.bottom
-    );
+    carrots.forEach(carrot => {
+        const carrotElement = document.getElementById(`carrot-${carrot.id}`);
+        if (!carrotElement || carrotElement.style.visibility === 'hidden') return; // Asegurarse de que la zanahoria exista y no haya sido recogida
 
-    if (isColliding) {
-        carrot.style.visibility = 'hidden'; // Hace que la zanahoria desaparezca
-        carrotCount += 1; // Incrementa el contador de zanahorias
-        updateCarrotCounter(); // Actualiza el contador en pantalla
-        showCarrotAnimation(carrotRect.left, carrotRect.top); // Muestra la animación de +1
-    }
+        const carrotRect = carrotElement.getBoundingClientRect();
+        const isColliding = (
+            characterRect.right >= carrotRect.left &&
+            characterRect.left <= carrotRect.right &&
+            characterRect.bottom >= carrotRect.top &&
+            characterRect.top <= carrotRect.bottom
+        );
+
+        if (isColliding) {
+            carrotElement.style.visibility = 'hidden'; // Hace que la zanahoria desaparezca
+            carrotCount += 1; // Incrementa el contador de zanahorias
+            updateCarrotCounter(); // Actualiza el contador en pantalla
+            showCarrotAnimation(carrotRect.left, carrotRect.top); // Muestra la animación de +1
+        }
+    });
 }
 
 function updateCarrotCounter() {

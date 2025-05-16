@@ -3,31 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego del Colegio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Kinde C</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f2c43c; 
+        }
+        /* Animación de latido continuo para las imágenes de las etapas */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(1.1);
+            }
+            60% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #stages-container a img:hover {
+            animation: heartbeat 0.6s ease-in-out infinite;
+            transform-origin: center;
+        }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="sky"></div> <!-- Nuevo elemento para el cielo -->
-        <div id="ground"></div> <!-- Nuevo elemento para el suelo -->
-        <div id="character"></div>
-        <div id="school"></div>
-        <div id="platform"></div>
-        <div id="npc-carrot"></div>
+    <div class="container text-center mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <video class="w-100" src="video.mp4" controls autoplay loop></video>
+            </div>
+        </div>
+        <div class="row mt-4" id="stages-container">
+            <div class="col-md-4">
+                <a href="stage01.html">
+                    <img class="img-fluid" src="img/stage01.png" alt="Stage 1">
+                </a>
+                <p class="mt-2">Nivel 1</p>
+            </div>
+            <div class="col-md-4">
+                <a href="stage02.html">
+                    <img class="img-fluid" src="img/stage02.png" alt="Stage 2">
+                </a>
+                <p class="mt-2">Nivel 2</p>
+            </div>
+            <div class="col-md-4">
+                <a href="stage03.html">
+                    <img class="img-fluid" src="img/stage03.png" alt="Stage 3">
+                </a>
+                <p class="mt-2">Nivel 3</p>
+            </div>
+        </div>
     </div>
-    <div id="win-overlay">
-        <img id="win-image" src="img/bravo.webp" alt="¡Ganaste!">
-    </div>
-    <div id="debug-panel">
-        <p><strong>Debug Panel</strong></p>
-        <p>Position X: <span id="debug-position-x">0</span></p>
-        <p>Position Y: <span id="debug-position-y">0</span></p>
-        <p>Is Jumping: <span id="debug-is-jumping">false</span></p>
-        <p>Keys Pressed: <span id="debug-keys-pressed">{}</span></p>
-        <p>Background Image: <span id="debug-background-image">none</span></p>
-        <p>Check Win: <span id="debug-check-win">false</span></p>
-        <p>Ground Level: <span id="debug-ground-level">0</span></p>
-    </div>
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

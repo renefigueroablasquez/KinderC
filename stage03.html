@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivel 3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <audio autoplay loop>
+        <source src="music.m4a" type="audio/mp4">
+        Tu navegador no soporta la reproducción de audio.
+    </audio>
+    <div id="btn-back">
+        <a href="index.html"
+            style="position: absolute; top: 10px; left: 10px; text-decoration: none; background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px; display: flex; align-items: center; gap: 5px;">
+            <span>&larr;</span> Volver
+        </a>
+    </div>
+
+    <div id="game-container">
+        <div id="sky"></div> <!-- Nuevo elemento para el cielo -->
+        <div id="ground"></div> <!-- Nuevo elemento para el suelo -->
+        <div id="character"></div>
+        <div id="school"></div>
+        <div id="platform"></div>
+        <div id="npc-carrot"></div>
+    </div>
+    <div id="win-overlay">
+        <img id="win-image" src="img/bravo2.gif" alt="¡Ganaste!">
+    </div>
+    <script src="script.js"></script>
+</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const audio = document.querySelector("audio");
+        if (audio) {
+            audio.volume = 0.2; // Ajusta el volumen al 20%
+        }
+
+        plataformas = [
+            { id: 1, left: 450, bottom: 130, width: 200, height: 25 },
+            { id: 2, left: 200, bottom: 210, width: 150, height: 25 },
+            { id: 3, left: 750, bottom: 210, width: 150, height: 25 },
+            { id: 4, left: 450, bottom: 290, width: 200, height: 25 }
+        ];
+
+        carrots = [
+            { id: 'carrot01', left: 230, bottom: 230, width: 40, height: 40 },
+            { id: 'carrot02', left: 780, bottom: 230, width: 40, height: 40 },
+            { id: 'carrot03', left: 480, bottom: 310, width: 40, height: 40 }
+        ];
+
+        gameContainer.style.backgroundImage = "url('img/fondo03.gif')";
+        init();
+    });
+</script>
+
+</html>
